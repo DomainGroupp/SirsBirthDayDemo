@@ -33,13 +33,14 @@ void resize(int width, int height){
 
 
 void render(){
+    void road();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0.0, 2.0, 10.0,    // above and in front
           0.0, 0.5, 0.0,    
           0.0, 1.0, 0.0);
-    drawTree();
+    road();
     glutSwapBuffers();
 }
 
@@ -161,3 +162,54 @@ void drawTrunk(float radius, int step, float height){
     glEnd();
 }
 
+
+
+void road(){
+    void treesAlongRoad(float, float);
+    glColor3f(0.30f, 0.30f, 0.34f);
+    glPushMatrix();
+        glTranslatef(0.0f,0.0f,8.0f);    
+        glRotatef(-8.0f,0.0f,1.0f,0.0f);
+        glTranslatef(0.0f,0.0f,-8.0f);    
+        
+        // Road
+        glBegin(GL_QUADS);
+        glVertex3f(-3.0f, -0.01f, -90.0f);  // far left
+        glVertex3f(-3.0f, -0.01f,   8.0f);  // near left
+        glVertex3f( 3.0f, -0.01f,   8.0f);  // near right
+        glVertex3f( 3.0f, -0.01f, -90.0f);  // far right
+        glEnd();
+
+        // White strips
+        glColor3f(0.85f,0.85f,0.85f);
+        glBegin(GL_QUADS);
+        for(float z = 8.0f; z > -90.0f; z-= 4.0f){
+            glVertex3f(-0.08f,0.0f, z - 2.0f); // far left 
+            glVertex3f(-0.08f,0.0f,z); // Near left 
+            glVertex3f(0.08f, 0.0f, z); // Near right
+            glVertex3f(0.08f,0.0f,z-2.0f);// far right 
+        }
+        glEnd();
+
+        // Trees along road 
+        for(float z = 8.0f; z > -90.0f; z = z - 20.0f){
+            treesAlongRoad(-3.0f, z);
+        }
+
+
+
+    glPopMatrix();
+}
+
+
+void treesAlongRoad(float x, float z){
+    void drawTree();
+    glPushMatrix();
+        glTranslatef(0.0f,0.0f,8.0f);    
+        glTranslatef(x,0.0f,z);    
+        drawTree();
+        glTranslatef(0.0f,0.0f,-z);
+        glTranslatef(-2*x,0.0f,z);    
+        drawTree();
+    glPopMatrix();
+}
