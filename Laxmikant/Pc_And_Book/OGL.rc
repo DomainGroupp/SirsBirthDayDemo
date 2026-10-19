@@ -1,0 +1,8 @@
+#include "OGL.h"
+
+MYICON ICON lst_icon.ico
+ID_BITMAP_SETUP BITMAP Setup.bmp
+
+
+
+

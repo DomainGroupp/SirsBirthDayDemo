@@ -1,0 +1,5 @@
+LST : Program started Successfully
+OpenGL Vendor : NVIDIA Corporation
+OpenGL Renderer : NVIDIA RTX A2000 Laptop GPU/PCIe/SSE2
+OpenGL Version : 4.6.0 NVIDIA 610.60
+WinMain() : initialize(): Function SucceededLST : Program Terminated Successfully
