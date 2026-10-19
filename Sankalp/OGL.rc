@@ -1,0 +1,8 @@
+#include "OGL.h"
+MYICON ICON Saturn.ico
+ID_BITMAP_SETUP BITMAP Setup.bmp
+
+
+
+
+
