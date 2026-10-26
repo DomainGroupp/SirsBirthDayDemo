@@ -1,0 +1,5 @@
+OMJ: Program Strated Sucessfully!!!!
+
+OMJ: WinMain: Initialize function Succsseded
+nOMJ: Program Terminated succesfully!!!
+

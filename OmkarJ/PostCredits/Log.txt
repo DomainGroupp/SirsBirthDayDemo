@@ -1,0 +1,2 @@
+LST : Program started Successfully
+WinMain() : initialize(): Function SucceededLST : Program Terminated Successfully
