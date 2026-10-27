@@ -1,0 +1,7 @@
+#pragma once
+
+#define MYICON 100
+#define IDBITMAP_PIC1 101
+#define IDBITMAP_PIC2 102
+#define IDBITMAP_PIC3 103
+#define IDBITMAP_PIC4 104
