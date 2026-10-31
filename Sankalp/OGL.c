@@ -55,12 +55,48 @@ float eyeZ = 1.0f;
 
 // For pati movement 
 float boardX = 9.0f;
-float board2X = 5.8f; // second board ("The Escape - An Ekanki"); its left edge starts at the right curtain's inner edge (3.5)
+float board2X = 5.8f; // second board
 
 // Text rendering
 GLuint font = 0;                 // Base of the 256 display lists, one per character
 int gWinWidth = WIN_WIDTH;       // Current client size, updated in resize(); used for the text ortho projection
 int gWinHeight = WIN_HEIGHT;
+
+
+// Audience 
+int audience_shoulder = -80;  
+int audience_elbow = 0;  
+#define MAX_AUDIENCE 16 
+GLfloat skinColor[MAX_AUDIENCE][3]; // 3 for RGB 
+GLfloat hairColor[MAX_AUDIENCE][3];
+GLfloat clothColor[MAX_AUDIENCE][3];
+int gCurrentMan = 0; // This we will use to know which man we are rendering out of say max 16 men
+
+
+void randomMan(){
+    GLfloat skinPalette[][3] = {
+    {0.80f, 0.60f, 0.40f}, {0.95f, 0.76f, 0.60f}, {0.65f, 0.45f, 0.30f},
+    {0.45f, 0.30f, 0.20f}, {0.88f, 0.68f, 0.52f}
+    };
+
+    GLfloat hairPalette[][3] = {
+    {0.20f, 0.20f, 0.20f}, {0.05f, 0.05f, 0.05f}, {0.35f, 0.20f, 0.10f},
+    {0.60f, 0.45f, 0.25f}, {0.70f, 0.70f, 0.70f}
+    };
+    int nSkin = sizeof(skinPalette) / sizeof(skinPalette[0]);
+    int nHair = sizeof(hairPalette) / sizeof(hairPalette[0]);
+
+    for(int i = 0 ; i < MAX_AUDIENCE ; i++){
+        int s = rand() % nSkin;
+        int h = rand() % nHair;
+        for(int c = 0 ; c<3; c++){
+            skinColor[i][c] = skinPalette[s][c];
+            hairColor[i][c] = hairPalette[h][c];
+            clothColor[i][c] = 0.15f + (rand() / (GLfloat)RAND_MAX) * 0.75f;
+        }
+    }
+}
+
 
 // Draws 2D text on top of the scene. x, y are in pixels from the bottom-left of the window.
 void MyDrawText(const char* text, int x, int y, float r, float g, float b)
@@ -229,6 +265,348 @@ void cube(float x, float y , float z){
     glEnd();
 }
 
+
+
+// For audience 
+
+void audience_arm(void)
+{
+    glPushMatrix();
+
+    //audience_arm
+    glTranslatef(0.8, -1.0f, 0.0f);
+    
+    //audience_shoulder joint
+    glPushMatrix();
+    // glColor3f(0.2f, 0.3f, 0.8f);
+    glColor3fv(clothColor[gCurrentMan]);
+    gluSphere(quadric, 0.25f, 10, 10);
+    glPopMatrix();
+
+    // glRotatef(-audience_armSwing, 1.0f, 0.0f, 0.0f);
+    //upperaudience_arm
+    glRotatef((GLfloat) audience_shoulder, 0.0f, 0.0f, 1.0f);
+    glTranslatef(0.75, 0.0f, 0.0f);
+    glPushMatrix();
+    glScalef(1.7f, 0.45f, 0.5f);
+    gluSphere(quadric, 0.5f, 10, 10);
+    glPopMatrix();
+
+    //foreaudience_arm
+    glTranslatef(0.75f, 0.0f, 0.0f);
+    
+    //audience_elbow joint
+    glPushMatrix();
+    glColor3fv(clothColor[gCurrentMan]);
+    gluSphere(quadric, 0.2f, 10, 10);
+    glPopMatrix();
+
+    // glRotatef((GLfloat)audience_elbow, 0.0f, 0.0f, 1.0f);
+    glRotatef(-(GLfloat)audience_elbow, 0.0f, 1.0f, 0.0f);
+    glTranslatef(0.6f, 0.0f, 0.0f);
+    glPushMatrix();
+    glScalef(1.4f, 0.35f, 0.4f);
+    gluSphere(quadric, 0.5f, 10, 10);
+    glPopMatrix();
+
+    //right hand
+    glTranslatef(0.65f, 0.0f, 0.0f);
+    glPushMatrix();
+    glColor3fv(skinColor[gCurrentMan]); // Skin tone
+    glScalef(1.2f, 0.8f, 0.6f);
+    gluSphere(quadric, 0.2f, 10, 10);
+    glPopMatrix();
+
+    glPopMatrix();
+
+    //left audience_arm
+    glPushMatrix();
+
+    glTranslatef(-0.8, -1.0f, 0.0f);
+    
+    //left audience_shoulder joint
+    glPushMatrix();
+    // glColor3f(0.2f, 0.3f, 0.8f);
+    glColor3fv(clothColor[gCurrentMan]); // Skin tone
+    gluSphere(quadric, 0.25f, 10, 10);
+    glPopMatrix();
+
+    // glRotatef(audience_armSwing, 1.0f, 0.0f, 0.0f);
+
+    //left upperaudience_arm
+    glRotatef(-(GLfloat) audience_shoulder, 0.0f, 0.0f, 1.0f);
+    glTranslatef(-0.75, 0.0f, 0.0f);
+    glPushMatrix();
+    glScalef(1.7f, 0.45f, 0.5f);
+    gluSphere(quadric, 0.5f, 10, 10);
+    glPopMatrix();
+
+    //left foreaudience_arm
+    glTranslatef(-0.75f, 0.0f, 0.0f);
+    
+    //left audience_elbow joint
+    glPushMatrix();
+    glColor3fv(clothColor[gCurrentMan]);
+    gluSphere(quadric, 0.2f, 10, 10);
+    glPopMatrix();
+
+    // glRotatef(-(GLfloat)audience_elbow, 0.0f, 0.0f, 1.0f);
+    glRotatef((GLfloat)audience_elbow, 0.0f, 1.0f, 0.0f);
+    glTranslatef(-0.6f, 0.0f, 0.0f);
+    glPushMatrix();
+    glScalef(1.4f, 0.35f, 0.4f);
+    gluSphere(quadric, 0.5f, 10, 10);
+    glPopMatrix();
+
+    //left hand
+    glTranslatef(-0.65f, 0.0f, 0.0f);
+    glPushMatrix();
+    glColor3fv(skinColor[gCurrentMan]); // Skin tone
+    glScalef(1.2f, 0.8f, 0.6f);
+    gluSphere(quadric, 0.2f, 10, 10);
+    glPopMatrix();
+
+    glPopMatrix();
+}
+
+
+void audience_cube(void)
+{
+    glBegin(GL_QUADS);
+	//red, right green, back blue, left cyn, top magenta, bot yellow
+
+    // front
+    // glColor3f(1.0f, 0.0f, 0.0f);
+	
+    glVertex3f(1.0f, 1.0f, 1.0f);
+
+    glVertex3f(-1.0f, 1.0f, 1.0f);
+	
+	glVertex3f(-1.0f, -1.0f, 1.0f);
+	
+	glVertex3f(1.0f, -1.0f, 1.0f);
+
+    //right
+    // glColor3f(0.0f, 1.0f, 0.0f);
+	
+    glVertex3f(1.0f, 1.0f, -1.0f);
+
+    glVertex3f(1.0f,  1.0f,  1.0f);
+	
+	glVertex3f(1.0f, -1.0f,  1.0f);
+	
+	glVertex3f(1.0f, -1.0f, -1.0f);
+
+    //back
+    // glColor3f(0.0f, 0.0f, 1.0f);
+	
+    glVertex3f(1.0f,  1.0f, -1.0f);
+
+    glVertex3f(-1.0f,  1.0f, -1.0f);
+	
+	glVertex3f(-1.0f, -1.0f, -1.0f);
+	
+	glVertex3f(1.0f, -1.0f, -1.0f);
+
+    //left
+    // glColor3f(1.0f, 0.0f, 1.0f);
+	
+    glVertex3f(-1.0f,  1.0f,  1.0f);
+
+    glVertex3f(-1.0f,  1.0f, -1.0f);
+	
+	glVertex3f(-1.0f, -1.0f, -1.0f);
+	
+	glVertex3f(-1.0f, -1.0f,  1.0f);
+	
+    //top
+    // glColor3f(0.0f, 1.0f, 1.0f);
+	
+    glVertex3f(1.0f,  1.0f, -1.0f);
+
+    glVertex3f(-1.0f,  1.0f, -1.0f);
+	
+	glVertex3f(-1.0f,  1.0f,  1.0f);
+	
+	glVertex3f(1.0f,  1.0f,  1.0f);
+
+    //bottom
+    // glColor3f(1.0f, 1.0f, 0.0f);
+	
+    glVertex3f(1.0f, -1.0f,  1.0f);
+
+    glVertex3f(-1.0f, -1.0f,  1.0f);
+	
+	glVertex3f(-1.0f, -1.0f, -1.0f);
+	
+	glVertex3f(1.0f, -1.0f, -1.0f);
+    glEnd();
+}
+
+
+void audience_torso(void)
+{
+    void audience_cube(void);
+    glPushMatrix();
+    glTranslatef(0.0f, -2.0f, 0.0f);
+    glScalef(0.8f, 1.2f, 0.4f);
+
+    // glColor3f(0.2f, 0.3f, 0.8f);
+    glColor3fv(clothColor[gCurrentMan]);
+    
+    audience_cube();
+
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.0f, -3.0f, 0.0f);
+    glScalef(1.0f, 1.0f, 0.55f);
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+    glColor3fv(clothColor[gCurrentMan]);
+    gluCylinder(quadric, 0.85f, 0.95f, 1.7f, 20, 20);
+    glPopMatrix();
+}
+
+void audience_head(void)
+{
+    //audience_head
+    glPushMatrix();
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glColor3fv(skinColor[gCurrentMan]); // Skin tone
+    gluSphere(quadric, 0.50, 30, 30);
+    glPopMatrix();
+
+    //hair
+    glPushMatrix();
+    glTranslatef(0.0f, 0.06f, -0.08f);
+    glColor3fv(hairColor[gCurrentMan]);
+    gluSphere(quadric, 0.53f, 20, 20);
+    glPopMatrix();
+
+    glPushMatrix();
+    glColor3fv(hairColor[gCurrentMan]);
+    glTranslatef(0.12f, 0.3f, 0.07f);
+    glScalef(1.0f, 0.4f, 0.9f);
+    glColor3fv(hairColor[gCurrentMan]);
+    gluSphere(quadric, 0.45f, 20, 20);
+    glPopMatrix();
+
+    //eyes
+    glPushMatrix();
+    glRotatef(20.0f, 0.0f, 1.0f, 0.0f);
+    glRotatef(-6.0f, 1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 0.0f, 0.48f);
+    glScalef(1.0f, 1.0f, 0.5f);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    gluSphere(quadric, 0.07, 20, 20);
+    glTranslatef(0.0f, 0.0f, 0.06f);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    gluSphere(quadric, 0.035, 20, 20);
+    glPopMatrix();
+
+    glPushMatrix();
+    glRotatef(-20.0f, 0.0f, 1.0f, 0.0f);
+    glRotatef(-6.0f, 1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 0.0f, 0.48f);
+    glScalef(1.0f, 1.0f, 0.5f);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    gluSphere(quadric, 0.07, 20, 20);
+    glTranslatef(0.0f, 0.0f, 0.06f);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    gluSphere(quadric, 0.035, 20, 20);
+    glPopMatrix();
+
+    glPushMatrix();
+    glRotatef(24.0f, 1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 0.0f, 0.47f);
+    glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
+    glTranslatef(0.09f, 0.0f, 0.0f);
+    glScalef(1.0f, 0.25f, 0.6f);
+    glColor3f(0.20f, 0.20f, 0.20f);
+    gluSphere(quadric, 0.1f, 20, 20);
+    glPopMatrix();
+
+    glPushMatrix();
+    glRotatef(24.0f, 1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 0.0f, 0.47f);
+    glRotatef(15.0f, 0.0f, 0.0f, 1.0f);
+    glTranslatef(-0.09f, 0.0f, 0.0f);
+    glScalef(1.0f, 0.25f, 0.6f);
+    glColor3f(0.20f, 0.20f, 0.20f);
+    gluSphere(quadric, 0.1f, 20, 20);
+    glPopMatrix();
+}
+
+void audience_neck(void)
+{
+    //audience_neck
+    glPushMatrix();
+
+    glTranslatef(0.0f, -0.5f, 0.0f);  // Position audience_neck
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f); // 
+
+    glColor3fv(skinColor[gCurrentMan]); // Skin tone
+    gluCylinder(quadric, 0.15, 0.15, 0.25, 20, 5);
+
+    glPopMatrix();
+}
+
+
+void manModel(void)
+{
+
+    void audience_head(void);
+    void audience_neck(void);
+    void audience_arm(void);
+    void audience_torso(void);
+    
+    audience_head();
+    audience_neck();
+    audience_arm();
+    audience_torso();
+}
+
+
+// For table tea and coffee 
+// Cup is built along +Z (the gluCylinder axis), base at z = 0, so rotate -90 about X before calling to stand it up
+void teaCup(){
+    glPushMatrix();
+    glTranslatef(1.2f, 0.0f, 1.0f);  // center = (cylinder radius, half of cylinder height along Z)
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f); // Disk lies in XY, turn it into the XZ plane so it hugs the cylinder wall
+    glColor3f(0.85f,0.85f,0.75f); // Tea cup handle - same cream as tea cup
+    
+    // For the handle
+    gluPartialDisk(quadric,
+                   0.6f,     // inner radius (hole of the handle)
+                   0.8f,     // outer radius  -> thickness = 0.8 - 0.6
+                   30,       // slices (smoothness)
+                   1,        // loops
+                   0.0f,     // start angle (0 = straight up, +Y)
+                   180.0f);  // sweep: half circle, bulging out to +X, Like the full 1st and 4th quadrant
+    glPopMatrix();
+
+
+    // Cup
+    glColor3f(0.95f,0.95f,0.85f);
+    gluCylinder(quadric,1.2f,1.2f,2.0f,20,20);
+    gluDisk(quadric,0.0f,1.2f,20,1); // Bottom of the cup
+}
+
+
+void coffeeCup(){
+    // Lower part - filled with coffee, so it looks brown
+    glColor3f(0.35f,0.18f,0.05f); // Coffee brown
+    gluCylinder(quadric,0.76f,1.00f,2.4f,20,20);
+
+    glPushMatrix();
+    glTranslatef(0.0f,0.0f,2.4f);
+    // Upper part - empty glass above the coffee
+    glColor3f(0.8f,0.9f,1.0f); // Light bluish glass
+    gluCylinder(quadric,1.0f,1.09f,0.6f,20,20);
+    glPopMatrix();
+
+}
 
 
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow){
@@ -535,6 +913,9 @@ void toggleFullscreen(void){
 int initialize(void){
     // Funtion declaration 
     void resize(int, int);
+    void randomMan(void); // This fills the global array for random man 
+
+    randomMan();
 
     // variable declaration
     PIXELFORMATDESCRIPTOR pfd; 
@@ -663,8 +1044,15 @@ void resize(int width, int height){
 }
 
 void render(void){
+    
+    // Function declarations
     void cube(float, float, float);
     void drawStage();
+    void manModel(void);
+    void teaCup(void);
+    void coffeeCup(void);
+
+    // Code
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -682,6 +1070,61 @@ void render(void){
         glVertex3f(x,0.0f,1.0f); // Right bottom
         glEnd();
     }
+
+    // Table on stage
+    glPushMatrix();// Out push to push the whole table front 
+
+    glTranslatef(0.0f,0.0f,5.0f);
+
+    // Table size - top spans x: 0.1 to 2.9, z: -8.7 to -7.3, top surface at y = 1.0
+    // Right edge stays well clear of the fully opened right curtain (inner edge at x = 3.5) from the camera's view
+    float tableCenterX = 1.5f;
+    float tableHalfWidth = 1.4f;
+    float tableHalfDepth = 0.7f;
+    float tableTopY = 1.0f;
+    float tableTopHalfThick = 0.05f;
+
+    glPushMatrix();
+    glTranslatef(tableCenterX,tableTopY - tableTopHalfThick,-8.0f); // Centre of the table top
+    glPushMatrix();
+    glScalef(tableHalfWidth,tableTopHalfThick,tableHalfDepth);
+    glColor3f(0.72f, 0.52f, 0.30f); // Light oak, so it stands out from the dark stage floor
+    audience_cube(); // Top of the table
+    glPopMatrix();
+
+    // Legs of the table - from the floor (y = 0) up to the underside of the top
+    float legHalfHeight = (tableTopY - 2.0f*tableTopHalfThick)/2.0f;
+    glColor3f(0.12f, 0.07f, 0.04f); // Dark walnut
+    for(int sx = -1; sx <= 1; sx += 2){
+        for(int sz = -1; sz <= 1; sz += 2){
+            glPushMatrix();
+            glTranslatef(sx*(tableHalfWidth - 0.15f),-tableTopHalfThick - legHalfHeight,sz*(tableHalfDepth - 0.15f));
+            glScalef(0.08f,legHalfHeight,0.08f);
+            audience_cube();
+            glPopMatrix();
+        }
+    }
+    glPopMatrix();
+
+    // Tea and coffee
+    // 9 tea cups and 1 coffee cup (the last slot, front right)
+    // 5 columns 0.55 apart (x: 0.4 to 2.6), 2 rows 0.6 apart (z: -8.3 and -7.7), ~0.3 clear gap between cups
+    for(int k = 0; k < 10; k++){
+        int col = k % 5;
+        int row = k / 5;
+        glPushMatrix();
+        glTranslatef(tableCenterX + (col - 2)*0.55f, tableTopY, -8.3f + row*0.6f);
+        glRotatef(-90.0f,1.0f,0.0f,0.0f); // Stand the cup up: its Z axis now points along +Y
+        glScalef(0.08f,0.08f,0.08f); // Tea cup: radius 0.096, height 0.16 | Coffee cup: radius 0.087, height 0.24
+        if(k == 9)
+            coffeeCup();
+        else
+            teaCup();
+        glPopMatrix();
+    }
+
+    glPopMatrix(); // Outermost pop for the table
+
 
     // Front of the stage
     glBegin(GL_QUADS);
@@ -728,7 +1171,7 @@ void render(void){
     // Movie name written on the beam. Depth test is off only for the text (its pixels have a single depth),
     // the beam has already written its depth so the curtains behind it still cannot draw over the text.
     glDisable(GL_DEPTH_TEST);
-    MyDrawText3D("PRATIBIMBA", 0.0f, -0.05f, 1.05f, 1.0f, 1.0f, 1.0f);
+    MyDrawText3D("PRATIBIMBA", 0.0f, -0.3f, 1.05f, 1.0f, 1.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glPopMatrix();
 
@@ -758,11 +1201,22 @@ void render(void){
     drawCurtain(rightCurtainXLeft, 8.0f, 4.0f, 0.0f, 0.25f, 12.0f, curtainPhase);
 
     // Seats 
-    for(float x = -5.0f ; x <= 5.0f; x+=0.8){
+    int man =0;
+    for(float x = -5.0f ; x <= 5.0f; x+=0.8, man++){
+        // Audience member sitting in front of the seat back
+        glPushMatrix();
+        glTranslatef(x, -0.35f, 3.0f);   // to the seat, head just above the backrest
+        glScalef(0.25f, 0.25f, 0.25f); 
+        // Audience to face the stage 
+        glRotatef(180.0f,0.0f,1.0f,0.0f);
+        gCurrentMan = man;
+        manModel();
+        glPopMatrix();
         glPushMatrix();
         cube(x,-1.0f,3.2f);
         glPopMatrix();
     }
+
 
     if(leftCurtainXRight == -3.5f){
         glPushMatrix();
@@ -779,7 +1233,7 @@ void render(void){
         if(boardX <= -8.0f){
             // The board is behind the right curtain, so it comes out from the curtain's inner edge
             glPushMatrix();
-            glTranslatef(board2X,2.0f,-2.0f);
+            glTranslatef(board2X,2.0f,-8.0f);
             brownFrame();
             MyDrawText3D("The Escape", 0.0f, 0.4f, 1.45f, 1.0f, 1.0f, 1.0f);
             MyDrawText3D("- An Ekanki", 0.0f, 0.0f, 1.45f, 1.0f, 1.0f, 1.0f);
@@ -793,28 +1247,36 @@ void render(void){
 void update(void){
     // code 
 
-    if(boardX > -8.0f){
-        boardX -= 0.00038f;
+    // Zoom out first; clamp so eyeZ lands exactly on the target and the zoom is "done"
+    if(eyeZ < 8.0f){
+        eyeZ += 0.0007f;
+        if(eyeZ > 8.0f){
+            eyeZ = 8.0f;
+        }
     }
-    else if(board2X > 0.0f){
-        board2X -= 0.00038f; // second board slides in and stops at the centre
-        if(board2X < 0.0f){
-            board2X = 0.0f;
+    BOOL zoomDone = (eyeZ >= 6.0f);
+
+    // Boards start moving only after the zoom out has finished
+    if(zoomDone){
+        if(boardX > -8.0f){
+            boardX -= 0.00088f;
+        }
+        else if(board2X > -8.0f){
+            board2X -= 0.00088f; 
+            if(board2X <= -8.0f){
+                board2X = -8.0f;
+            }
         }
     }
 
-    if(eyeZ < 8.0f){
-        eyeZ += 0.0004f;
-    }
-
     if (leftCurtainXRight > -3.5f){
-        leftCurtainXRight -= 0.00025f;
+        leftCurtainXRight -= 0.00045f;
     }
     if(leftCurtainXRight < -3.5f){
         leftCurtainXRight = -3.5f;
     }
     if(rightCurtainXLeft < 4.5f){
-        rightCurtainXLeft += 0.00025f;
+        rightCurtainXLeft += 0.00045f;
     }
     if(rightCurtainXLeft > 3.5f){
         rightCurtainXLeft = 3.5f;
