@@ -595,8 +595,8 @@ void teaCup(){
 
 
 void coffeeCup(){
-    // Lower part - filled with coffee, so it looks brown
-    glColor3f(0.35f,0.18f,0.05f); // Coffee brown
+    // Lower part - filled with tea-coloured coffee
+    glColor3f(0.76f,0.55f,0.33f); // Tea (chai) colour
     gluCylinder(quadric,0.76f,1.00f,2.4f,20,20);
 
     glPushMatrix();
@@ -1088,7 +1088,7 @@ void render(void){
     glTranslatef(tableCenterX,tableTopY - tableTopHalfThick,-8.0f); // Centre of the table top
     glPushMatrix();
     glScalef(tableHalfWidth,tableTopHalfThick,tableHalfDepth);
-    glColor3f(0.72f, 0.52f, 0.30f); // Light oak, so it stands out from the dark stage floor
+    glColor3f(0.45f, 0.28f, 0.14f); // Medium-dark brown, still lighter than the walnut legs
     audience_cube(); // Top of the table
     glPopMatrix();
 
@@ -1107,7 +1107,7 @@ void render(void){
     glPopMatrix();
 
     // Tea and coffee
-    // 9 tea cups and 1 coffee cup (the last slot, front right)
+    // 9 coffee glasses and 1 tea cup (the last slot, front right)
     // 5 columns 0.55 apart (x: 0.4 to 2.6), 2 rows 0.6 apart (z: -8.3 and -7.7), ~0.3 clear gap between cups
     for(int k = 0; k < 10; k++){
         int col = k % 5;
@@ -1117,9 +1117,9 @@ void render(void){
         glRotatef(-90.0f,1.0f,0.0f,0.0f); // Stand the cup up: its Z axis now points along +Y
         glScalef(0.08f,0.08f,0.08f); // Tea cup: radius 0.096, height 0.16 | Coffee cup: radius 0.087, height 0.24
         if(k == 9)
-            coffeeCup();
-        else
             teaCup();
+        else
+            coffeeCup();
         glPopMatrix();
     }
 
